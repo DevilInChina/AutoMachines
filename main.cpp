@@ -29,7 +29,7 @@ private:
         }
         return vector<int>(ret.begin(),ret.end());
     }
-    bool ifacc(const string &s, int CurLen, int indx) {
+    bool ifacc(const string &s, int CurLen, int indx,bool showGraph=false) {
         if (CurLen > s.size() || indx == -1)return false;
 
         bool ret = false;
@@ -45,7 +45,10 @@ private:
             if (it == StatusStore[S].Next.end())continue;
 
             for (auto its:it->second) {
-                ret = ret | ifacc(s, CurLen + 1, its);
+                ret = ret | ifacc(s, CurLen + 1, its,showGraph);
+                if(showGraph) {
+                    cout << indx << "-->|" << s[CurLen] << "," << (ret ? "true" : "false") << "|" << its << endl;
+                }
                 if (ret)return ret;
             }
         }
@@ -163,15 +166,14 @@ public:
 
         }
         addStatus(statusStack.top(),acc,EPSILON);
-
-        while (!statusStack.empty()){
-            cout<<statusStack.top()<<endl;
-            statusStack.pop();
-        }
     }
 
-    bool match(const string &s) {
-        return ifacc(s, 0, beg);
+    bool match(const string &s , bool showGraph = false) {
+        if(showGraph) {
+            cout << "```mermaid" << endl;
+            cout << "graph LR" << endl;
+        }
+        return ifacc(s, 0, beg,showGraph);
     }
     void showSelf(){
         for(auto &it :StatusStore){
@@ -187,13 +189,16 @@ public:
     }
 };
 //(0|1)*0011((0|1)*1(0|1)*)*
+//(0|1)*1(0|-)1(0|1)*
 
 int main() {
+    cout<<"```mermaid"<<endl;
+    cout<<"graph LR"<<endl;
     NFA S("(0|1)*1(0|-)1(0|1)*");
     S.showSelf();
     string str;
     while (cin >> str) {
-        cout << S.match(str)<<endl;
+        cout << S.match(str,true)<<endl;
     }
     return 0;
 }
