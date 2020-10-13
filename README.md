@@ -1,4 +1,5 @@
 "# RegexToNFA" 
+
 c++ main.cpp -o main
 
 ```mermaid
